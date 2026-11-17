@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10304D">
+<title>Şezlong · Görevli Paneli</title>
+<style>
+  :root{--navy:#10304D;--navy2:#1E4A70;--sea:#128C8C;--sand:#F6F1E8;--ink:#1B2733;--muted:#6A7785;--line:#E3DCCF;
+        --bos:#FFFFFF;--dolu:#2F6FA8;--kontrol:#E8A92E;--uyari:#E0663B;--terk:#C2302A;--kapali:#B9C1CA}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--sand);color:var(--ink)}
+  button{font-family:inherit}
+  .hidden{display:none!important}
+  /* login */
+  #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--navy)}
+  .lbox{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:360px}
+  .lbox h1{margin:0 0 4px;font-size:22px;color:var(--navy)} .lbox p{margin:0 0 18px;color:var(--muted);font-size:14px}
+  .lbox input{width:100%;padding:13px;font-size:16px;border:1.5px solid var(--line);border-radius:10px;margin-bottom:10px}
+  .lbox button{width:100%;padding:14px;border:0;border-radius:10px;background:var(--sea);color:#fff;font-weight:700;font-size:16px;cursor:pointer}
+  .err{color:var(--terk);font-size:14px;margin-top:10px;min-height:18px}
+  /* top bar */
+  header{background:var(--navy);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+  header .t{font-weight:800;font-size:17px;margin-right:auto}
+  header .t small{display:block;font-weight:500;font-size:12px;opacity:.75}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tabs button{background:rgba(255,255,255,.1);border:0;color:#fff;padding:10px 16px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
+  .tabs button.on{background:#fff;color:var(--navy)}
+  .tabs button span{opacity:.7;font-weight:500;margin-left:6px;font-size:13px}
+  .icon-btn{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:8px 10px;cursor:pointer;font-size:13px}
+  .conn{width:9px;height:9px;border-radius:50%;background:#7ED69B;display:inline-block}
+  .conn.off{background:#E0663B}
+  /* filters */
+  .bar{display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;align-items:center;background:#fff;border-bottom:1px solid var(--line)}
+  .chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;color:var(--ink)}
+  .chip.on{border-color:var(--navy);background:var(--navy);color:#fff}
+  .chip i{width:12px;height:12px;border-radius:4px;display:inline-block;border:1px solid rgba(0,0,0,.15)}
+  .chip b{font-variant-numeric:tabular-nums}
+  .search{margin-left:auto;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;width:190px}
+  /* grid */
+  main{padding:16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:8px}
+  .tile{aspect-ratio:1;border-radius:12px;border:2px solid var(--line);background:var(--bos);cursor:pointer;position:relative;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;user-select:none;transition:transform .06s}
+  .tile:active{transform:scale(.95)}
+  .tile .n{font-size:20px;font-weight:800;line-height:1}
+  .tile .s{font-size:11px;margin-top:4px;opacity:.9;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tile.dolu{background:var(--dolu);border-color:var(--dolu);color:#fff}
+  .tile.kontrol{background:var(--dolu);border-color:var(--kontrol);border-width:4px;color:#fff}
+  .tile.kontrol::after{content:"!";position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:var(--kontrol);color:#fff;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .tile.uyari{background:var(--uyari);border-color:var(--uyari);color:#fff}
+  .tile.terk{background:var(--terk);border-color:var(--terk);color:#fff;animation:blink 1.4s infinite}
+  .tile.kapali{background:repeating-linear-gradient(45deg,#E4E8EC,#E4E8EC 6px,#D5DBE1 6px,#D5DBE1 12px);border-color:var(--kapali);color:#6A7785}
+  .tile.dim{opacity:.18}
+  @keyframes blink{50%{box-shadow:0 0 0 4px rgba(194,48,42,.3)}}
+  .empty{text-align:center;color:var(--muted);padding:60px 20px}
+  /* sheet */
+  .ov{position:fixed;inset:0;background:rgba(16,48,77,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+  .sheet{background:#fff;width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:22px 20px 26px;max-height:90vh;overflow:auto}
+  @media(min-width:700px){.ov{align-items:center}.sheet{border-radius:20px}}
+  .sh-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .sh-code{font-size:32px;font-weight:800;color:var(--navy)}
+  .sh-area{color:var(--muted);font-size:14px}
+  .x{background:#F1EDE6;border:0;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer}
+  .st{display:inline-block;margin-top:10px;padding:6px 12px;border-radius:999px;font-weight:700;font-size:13px;color:#fff}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:16px 0;font-size:15px}
+  .kv span{color:var(--muted)} .kv b{font-variant-numeric:tabular-nums}
+  .big-cd{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums}
+  .act{display:block;width:100%;padding:15px;border-radius:12px;border:0;font-size:16px;font-weight:700;margin-top:10px;cursor:pointer}
+  .a-warn{background:var(--uyari);color:#fff} .a-terk{background:var(--terk);color:#fff}
+  .a-pri{background:var(--sea);color:#fff} .a-sec{background:#EEF2F6;color:var(--navy)}
+  .a-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--line)}
+  .sheet input{width:100%;padding:13px;font-size:20px;font-weight:700;border:1.5px solid var(--line);border-radius:10px;margin-top:6px;letter-spacing:.06em}
+  .sheet label{font-size:13px;font-weight:600;color:var(--muted);display:block;margin-top:14px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <div class="lbox">
+    <h1>Görevli Girişi</h1>
+    <p>Şezlong yönetim paneli</p>
+    <input id="email" type="email" placeholder="E-posta" autocomplete="username">
+    <input id="pass" type="password" placeholder="Şifre" autocomplete="current-password">
+    <button onclick="login()">Giriş Yap</button>
+    <div class="err" id="lerr"></div>
+  </div>
+</section>
+
+<section id="app" class="hidden">
+  <header>
+    <div class="t">Şezlong Paneli<small id="who"></small></div>
+    <div class="tabs" id="tabs"></div>
+    <span class="conn" id="conn" title="Bağlantı"></span>
+    <button class="icon-btn" onclick="logout()">Çıkış</button>
+  </header>
+  <div class="bar" id="filters"></div>
+  <main><div class="grid" id="grid"></div></main>
+</section>
+
+<div id="sheetWrap"></div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="sezlong-config.js"></script>
+<script>
+const C = window.SEZLONG_CONFIG || {};
+const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+const $ = id => document.getElementById(id);
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const ST = {
+  bos:     {ad:'Boş',            renk:'#FFFFFF'},
+  dolu:    {ad:'Dolu',           renk:'#2F6FA8'},
+  kontrol: {ad:'Kontrol et',     renk:'#E8A92E'},
+  uyari:   {ad:'Uyarı kartında', renk:'#E0663B'},
+  terk:    {ad:'Boşaltılabilir', renk:'#C2302A'},
+  kapali:  {ad:'Kapalı',         renk:'#B9C1CA'},
+};
+let D = null, offset = 0, alanId = null, filtre = 'hepsi', arama = '', acikId = null, tickTimer = null, reloadT = null;
+
+function now(){ return Date.now() + offset; }
+function dk(ms){ return Math.floor(ms/60000); }
+function durum(s){
+  const a = D.ayarlar;
+  if(s.kapali) return 'kapali';
+  if(!s.k_id) return 'bos';
+  if(s.uyari_zamani) return (now() - new Date(s.uyari_zamani)) >= a.uyari_sure_dk*60000 ? 'terk' : 'uyari';
+  if(now() - new Date(s.son_onay) >= a.bos_sure_dk*60000) return 'kontrol';
+  return 'dolu';
+}
+function saat(ts){ return ts ? new Date(ts).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}) : '—'; }
+function sure(ms){ ms = Math.max(0, ms); const m = dk(ms); return m >= 60 ? `${Math.floor(m/60)} sa ${m%60} dk` : `${m} dk`; }
+function toast(m){ const el=$('toast'); el.textContent=m; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2400); }
+
+async function login(){
+  $('lerr').textContent='';
+  const { error } = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('pass').value });
+  if(error){ $('lerr').textContent = 'Giriş başarısız: e-posta veya şifre hatalı.'; return; }
+  start();
+}
+async function logout(){ await sb.auth.signOut(); location.reload(); }
+
+async function start(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(!session){ $('login').classList.remove('hidden'); $('app').classList.add('hidden'); return; }
+  const { data: p } = await sb.from('sz_personel').select('ad,rol').eq('user_id', session.user.id).maybeSingle();
+  if(!p){ $('lerr').textContent = 'Bu hesap personel olarak tanımlı değil.'; await sb.auth.signOut(); $('login').classList.remove('hidden'); return; }
+  $('who').textContent = `${p.ad} · ${p.rol === 'admin' ? 'Yönetici' : 'Görevli'}`;
+  $('login').classList.add('hidden'); $('app').classList.remove('hidden');
+  try{ alanId = Number(localStorage.getItem('sz_g_alan')) || null; }catch(e){}
+  await yukle();
+  sb.channel('sezlong-canli')
+    .on('postgres_changes', {event:'*', schema:'public', table:'sz_kullanimlar'}, planla)
+    .on('postgres_changes', {event:'*', schema:'public', table:'sz_sezlonglar'}, planla)
+    .subscribe(s => $('conn').classList.toggle('off', s !== 'SUBSCRIBED'));
+  setInterval(ciz, 20000);       // süre sayaçlarını güncelle
+  setInterval(yukle, 60000);     // güvenlik için tam yenileme
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) yukle(); });
+}
+function planla(){ clearTimeout(reloadT); reloadT = setTimeout(yukle, 400); }
+
+async function yukle(){
+  const { data, error } = await sb.rpc('gorevli_durum');
+  if(error){ $('conn').classList.add('off'); return; }
+  D = data; offset = new Date(D.simdi).getTime() - Date.now();
+  if(!D.alanlar.some(a=>a.id===alanId)) alanId = D.alanlar[0]?.id ?? null;
+  ciz();
+  if(acikId) sheet(acikId, true);
+}
+
+function ciz(){
+  if(!D) return;
+  const say = id => { const c = {bos:0,dolu:0,kontrol:0,uyari:0,terk:0,kapali:0};
+    D.sezlonglar.filter(s=>s.alan_id===id).forEach(s=>c[durum(s)]++); return c; };
+  $('tabs').innerHTML = D.alanlar.map(a=>{ const c=say(a.id); const top=Object.values(c).reduce((x,y)=>x+y,0);
+    return `<button class="${a.id===alanId?'on':''}" onclick="alanSec(${a.id})">${esc(a.ad)}<span>${top-c.bos-c.kapali}/${top-c.kapali}</span></button>`; }).join('');
+
+  const c = say(alanId);
+  const ch = (k, ad, renk, n) => `<button class="chip ${filtre===k?'on':''}" onclick="filtreSec('${k}')">${renk?`<i style="background:${renk}"></i>`:''}${ad} <b>${n}</b></button>`;
+  const toplam = Object.values(c).reduce((x,y)=>x+y,0);
+  $('filters').innerHTML = ch('hepsi','Tümü','',toplam) + ['kontrol','uyari','terk','bos','dolu','kapali'].map(k=>ch(k,ST[k].ad,ST[k].renk,c[k])).join('')
+    + `<input class="search" id="ara" placeholder="Şezlong no / oda" value="${esc(arama)}" oninput="araYaz(this.value)">`;
+
+  const list = D.sezlonglar.filter(s=>s.alan_id===alanId);
+  if(!list.length){ $('grid').innerHTML = `<div class="empty">Bu alanda tanımlı şezlong yok. Yönetim panelinden ekleyebilirsiniz.</div>`; return; }
+  const q = arama.trim().toUpperCase();
+  $('grid').innerHTML = list.map(s=>{
+    const d = durum(s);
+    let alt = '';
+    if(d==='uyari') alt = `⏱ ${Math.max(0, D.ayarlar.uyari_sure_dk - dk(now()-new Date(s.uyari_zamani)))} dk`;
+    else if(d==='terk') alt = 'BOŞALT';
+    else if(d==='dolu' || d==='kontrol') alt = esc(s.oda);
+    const eslesir = (filtre==='hepsi' || filtre===d) && (!q || String(s.no)===q.replace(/^\D*-?0*/,'') || s.kod===q || (s.oda||'')===q);
+    return `<div class="tile ${d} ${eslesir?'':'dim'}" onclick="sheet(${s.id})"><div class="n">${s.no}</div><div class="s">${alt}</div></div>`;
+  }).join('');
+}
+function alanSec(id){ alanId=id; try{localStorage.setItem('sz_g_alan',id)}catch(e){}; ciz(); }
+function filtreSec(k){ filtre = filtre===k ? 'hepsi' : k; ciz(); }
+function araYaz(v){ arama=v; ciz(); const el=$('ara'); el.focus(); el.setSelectionRange(v.length,v.length); }
+
+function sheet(id, yenile){
+  const s = D.sezlonglar.find(x=>x.id===id);
+  if(!s){ kapat(); return; }
+  acikId = id;
+  const d = durum(s), a = D.ayarlar, alan = D.alanlar.find(x=>x.id===s.alan_id);
+  const odaEl = document.getElementById('sOda'); const odaVal = yenile && odaEl ? odaEl.value : '';
+  let h = `<div class="sh-h"><div><div class="sh-code">${esc(s.kod)}</div><div class="sh-area">${esc(alan?.ad)}</div>
+           <span class="st" style="background:${d==='bos'?'#2E8B57':ST[d].renk}">${ST[d].ad}</span></div>
+           <button class="x" onclick="kapat()">✕</button></div>`;
+  if(s.k_id){
+    h += `<div class="kv"><span>Oda</span><b>${esc(s.oda)}</b>
+          <span>Başlangıç</span><b>${saat(s.basladi)} (${sure(now()-new Date(s.basladi))})</b>
+          <span>Son "buradayım"</span><b>${saat(s.son_onay)} (${sure(now()-new Date(s.son_onay))} önce)</b>
+          ${s.gorevli_ile?'<span>Kayıt</span><b>Görevli tarafından</b>':''}</div>`;
+  }
+  if(d==='bos'){
+    h += `<label>Misafir adına ver – oda numarası</label><input id="sOda" inputmode="numeric" maxlength="6" value="${esc(odaVal)}" placeholder="1205">
+          <button class="act a-pri" onclick="islem(${id},'doldur')">Misafir adına ver</button>
+          <button class="act a-ghost" onclick="islem(${id},'kapat')">Kullanıma kapat (bakım vb.)</button>`;
+  } else if(d==='dolu' || d==='kontrol'){
+    if(d==='kontrol') h += `<p style="margin:0 0 6px;color:#9A6B12;font-size:14px">Misafir ${a.bos_sure_dk} dakikadan uzun süredir onay vermedi. Şezlong boşsa uyarı kartı bırakın.</p>`;
+    h += `<button class="act a-warn" onclick="islem(${id},'uyari')">Uyarı kartı bıraktım (${a.uyari_sure_dk} dk başlat)</button>
+          <button class="act a-sec" onclick="islem(${id},'bosalt')">Boşalt (misafir ayrıldı)</button>
+          <button class="act a-ghost" onclick="islem(${id},'kapat')">Kullanıma kapat</button>`;
+  } else if(d==='uyari' || d==='terk'){
+    const kalan = a.uyari_sure_dk*60000 - (now()-new Date(s.uyari_zamani));
+    h += `<div style="text-align:center;margin:6px 0 4px"><div style="color:var(--muted);font-size:13px">${d==='terk'?'Süre doldu':'Kalan süre'}</div>
+          <div class="big-cd" id="cd" style="color:${d==='terk'?'var(--terk)':'var(--uyari)'}">${d==='terk'?'00:00':''}</div></div>
+          <button class="act ${d==='terk'?'a-terk':'a-sec'}" onclick="islem(${id},'terk')">${d==='terk'?'Terk – şezlongu boşalt':'Süre dolmadan terk olarak boşalt'}</button>
+          <button class="act a-pri" onclick="islem(${id},'uyari_iptal')">Misafir döndü – uyarıyı kaldır</button>`;
+    clearInterval(tickTimer);
+    if(d==='uyari'){
+      const end = new Date(s.uyari_zamani).getTime() + a.uyari_sure_dk*60000;
+      const tk = ()=>{ const ms = end - now(); const el=$('cd'); if(!el) return;
+        if(ms<=0){ clearInterval(tickTimer); ciz(); sheet(id,true); return; }
+        const sec=Math.round(ms/1000); el.textContent=`${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`; };
+      setTimeout(tk); tickTimer = setInterval(tk,1000);
+    }
+  } else if(d==='kapali'){
+    h += `<p style="color:var(--muted)">Bu şezlong misafir kullanımına kapalı.</p>
+          <button class="act a-pri" onclick="islem(${id},'ac')">Kullanıma aç</button>`;
+  }
+  h += `<div class="err" id="sErr"></div>`;
+  $('sheetWrap').innerHTML = `<div class="ov" onclick="if(event.target===this)kapat()"><div class="sheet">${h}</div></div>`;
+}
+function kapat(){ acikId=null; clearInterval(tickTimer); $('sheetWrap').innerHTML=''; }
+
+const HATA = {oda:'Geçersiz oda numarası.', dolu:'Şezlong az önce doldu.', limit:'Oda için şezlong sınırı dolu.', kapali:'Şezlong kapalı.'};
+const MESAJ = {doldur:'Şezlong misafir adına verildi', uyari:'Uyarı başlatıldı', uyari_iptal:'Uyarı kaldırıldı',
+               bosalt:'Şezlong boşaltıldı', terk:'Şezlong terk olarak boşaltıldı', kapat:'Şezlong kapatıldı', ac:'Şezlong açıldı'};
+async function islem(id, tip){
+  const oda = tip==='doldur' ? ($('sOda')?.value||'').trim() : null;
+  if(tip==='doldur' && !oda){ $('sErr').textContent='Oda numarası girin.'; return; }
+  document.querySelectorAll('.act').forEach(b=>b.disabled=true);
+  const { data, error } = await sb.rpc('gorevli_islem', { p_sezlong_id: id, p_islem: tip, p_oda: oda });
+  if(error || !data?.ok){
+    $('sErr').textContent = error ? 'Bağlantı hatası, tekrar deneyin.' : (HATA[data.hata] || 'İşlem yapılamadı.');
+    document.querySelectorAll('.act').forEach(b=>b.disabled=false); return;
+  }
+  toast(MESAJ[tip]); kapat(); await yukle();
+}
+
+sb.auth.onAuthStateChange((ev)=>{ if(ev==='SIGNED_OUT'){ $('app').classList.add('hidden'); $('login').classList.remove('hidden'); } });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') kapat(); if(e.key==='Enter' && !$('login').classList.contains('hidden')) login(); });
+start();
+</script>
+</body>
+</html>

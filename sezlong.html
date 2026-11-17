@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10304D">
+<title>Şezlong · Sunbed</title>
+<style>
+  :root{
+    --navy:#10304D; --navy2:#1E4A70; --sea:#128C8C; --sea-l:#E3F3F2;
+    --sand:#F6F1E8; --card:#FFFFFF; --ink:#1B2733; --muted:#6A7785; --line:#E6DFD3;
+    --warn:#E0663B; --warn-l:#FCEDE6; --ok:#2E8B57; --gray:#9AA5B1;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+       background:var(--sand);color:var(--ink);-webkit-font-smoothing:antialiased}
+  header{background:var(--navy);color:#fff;padding:18px 18px 54px;position:relative}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .brand{font-size:13px;letter-spacing:.14em;opacity:.85}
+  .langs{display:flex;gap:4px}
+  .langs button{background:transparent;border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;
+       font-size:12px;padding:5px 8px;cursor:pointer}
+  .langs button.on{background:#fff;color:var(--navy);border-color:#fff;font-weight:700}
+  header h1{margin:16px 0 0;font-size:22px;font-weight:700}
+  main{max-width:480px;margin:-38px auto 0;padding:0 14px 40px;position:relative}
+  .card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 6px 24px rgba(16,48,77,.08);margin-bottom:14px}
+  .bed{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .code{font-size:38px;font-weight:800;letter-spacing:.02em;color:var(--navy);line-height:1}
+  .area{color:var(--muted);font-size:14px;margin-top:6px}
+  .badge{font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px;white-space:nowrap}
+  .b-bos{background:#E5F4EA;color:var(--ok)} .b-dolu{background:#E8EEF5;color:var(--navy2)}
+  .b-uyari{background:var(--warn-l);color:var(--warn)} .b-kapali{background:#EEF0F2;color:var(--muted)}
+  .b-benim{background:var(--sea-l);color:var(--sea)}
+  h2{font-size:18px;margin:0 0 6px}
+  p{margin:0 0 12px;line-height:1.5;color:#3A4754;font-size:15px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 6px}
+  input{width:100%;font-size:22px;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;
+        letter-spacing:.08em;font-weight:700;color:var(--navy);background:#FCFAF6}
+  input:focus{outline:none;border-color:var(--sea);background:#fff}
+  .btn{display:block;width:100%;border:0;border-radius:12px;font-size:17px;font-weight:700;padding:15px;
+       margin-top:12px;cursor:pointer;transition:transform .05s}
+  .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.5}
+  .btn-p{background:var(--sea);color:#fff}
+  .btn-n{background:var(--navy);color:#fff}
+  .btn-g{background:transparent;color:var(--muted);border:1.5px solid var(--line)}
+  .btn-g.confirm{border-color:var(--warn);color:var(--warn)}
+  .msg{padding:12px 14px;border-radius:12px;font-size:14px;margin-top:12px;display:none}
+  .msg.show{display:block}
+  .msg.ok{background:#E5F4EA;color:#1F6B41} .msg.err{background:var(--warn-l);color:#A8401C}
+  .warnbox{background:var(--warn-l);border-left:4px solid var(--warn);border-radius:10px;padding:12px 14px;margin:12px 0}
+  .warnbox b{color:var(--warn)}
+  .countdown{font-size:26px;font-weight:800;color:var(--warn);margin-top:4px}
+  .rules{font-size:13px;color:var(--muted);line-height:1.5;margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--line)}
+  .sec-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .sec-h small{color:var(--muted);font-size:12px}
+  .live{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;
+        box-shadow:0 0 0 0 rgba(46,139,87,.5);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(46,139,87,.45)}70%{box-shadow:0 0 0 8px rgba(46,139,87,0)}100%{box-shadow:0 0 0 0 rgba(46,139,87,0)}}
+  .ar{padding:12px 0;border-bottom:1px solid #F0EBE2}
+  .ar:last-child{border-bottom:0}
+  .ar-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .ar-name{font-weight:700;font-size:16px}
+  .ar-free{font-size:14px;color:var(--muted)} .ar-free b{color:var(--ink);font-size:18px}
+  .bar{height:10px;background:#EFE9DF;border-radius:6px;margin-top:8px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:6px}
+  .lvl{font-size:12px;font-weight:700;margin-left:6px}
+  .mine-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #F0EBE2;font-size:15px}
+  .mine-row:last-child{border-bottom:0}
+  .mine-row b{font-size:17px;color:var(--navy)}
+  .room-line{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:var(--muted)}
+  .room-line button{background:none;border:0;color:var(--sea);font-weight:700;cursor:pointer;font-size:14px}
+  .center{text-align:center}
+  .skeleton{height:120px;border-radius:12px;background:linear-gradient(90deg,#F2ECE2,#FAF6EF,#F2ECE2);background-size:200% 100%;animation:sk 1.2s infinite}
+  @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="brand" id="hotel">NOXINN DELUXE HOTEL</div>
+    <div class="langs" id="langs"></div>
+  </div>
+  <h1 id="title"></h1>
+</header>
+<main>
+  <div id="bedCard" class="card"><div class="skeleton"></div></div>
+  <div id="mineCard" class="card" style="display:none"></div>
+  <div class="card">
+    <div class="sec-h"><h2><span class="live"></span><span id="mapTitle"></span></h2><small id="updated"></small></div>
+    <div id="map"><div class="skeleton"></div></div>
+  </div>
+</main>
+<footer id="foot"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="sezlong-config.js"></script>
+<script>
+const T = {
+  tr:{title:'Şezlong',bos:'Boş',dolu:'Dolu',uyari:'Uyarı',kapali:'Kapalı',benim:'Sizin',
+      room_label:'Oda numaranız',take:'Şezlongu Al',mine_title:'Bu şezlong sizin',here:'Buradayım',
+      release:'Şezlongu Bırak',confirm_again:'Bırakmak için tekrar dokunun',
+      occupied_title:'Bu şezlong dolu',occupied_text:'Aşağıdaki canlı doluluktan boş şezlong bulunan alanları görebilirsiniz.',
+      is_yours:'Bu şezlong sizin mi? Oda numaranızı girin.',check:'Kontrol Et',
+      closed_title:'Bu şezlong şu an kullanıma kapalı',closed_text:'Lütfen yakındaki başka bir şezlongu kullanın.',
+      warn_title:'Şezlongunuz boş göründü',warn_text:'Görevlimiz şezlongunuzu boş gördü. Süre dolmadan "Buradayım"a dokunmazsanız şezlong diğer misafirlere açılacaktır.',
+      rules:'Şezlongunuzu uzun süre boş bırakırsanız görevlilerimiz uyarı kartı bırakır; {m} dakika içinde dönülmezse şezlong diğer misafirlere açılır. Havluyla yer tutulamaz.',
+      map_title:'Canlı Doluluk',free:'boş',updated:'Güncellendi',my_title:'Şezlonglarım',
+      not_found:'Şezlong bulunamadı. Lütfen QR kodu tekrar okutun.',err_room:'Geçerli bir oda numarası girin.',
+      err_dolu:'Üzgünüz, bu şezlong az önce alındı.',err_limit:'Odanız için şezlong sınırına ulaşıldı ({n}).',
+      err_generic:'Bir hata oluştu, lütfen tekrar deneyin.',ok_taken:'Şezlong sizin. İyi tatiller!',
+      ok_here:'Teşekkürler, onaylandı.',ok_released:'Şezlong bırakıldı. Teşekkürler!',
+      scan_hint:'Şezlong almak için şezlongun üzerindeki QR kodu okutun.',calm:'Sakin',mid:'Orta',busy:'Yoğun',full:'Dolu',
+      room:'Oda',change:'Değiştir',warn_short:'uyarı',since:'Başlangıç',min:'dk'},
+  en:{title:'Sunbed',bos:'Free',dolu:'Taken',uyari:'Warning',kapali:'Closed',benim:'Yours',
+      room_label:'Your room number',take:'Take this sunbed',mine_title:'This sunbed is yours',here:"I'm here",
+      release:'Release sunbed',confirm_again:'Tap again to release',
+      occupied_title:'This sunbed is taken',occupied_text:'See the live occupancy below to find areas with free sunbeds.',
+      is_yours:'Is this your sunbed? Enter your room number.',check:'Check',
+      closed_title:'This sunbed is currently closed',closed_text:'Please use another sunbed nearby.',
+      warn_title:'Your sunbed looked unattended',warn_text:'Our staff found your sunbed unattended. If you don’t tap "I’m here" before the time runs out, it will be released to other guests.',
+      rules:'If you leave your sunbed unattended for a long time, our staff will leave a notice card; if you don’t return within {m} minutes, the sunbed is released to other guests. Reserving with towels is not allowed.',
+      map_title:'Live Occupancy',free:'free',updated:'Updated',my_title:'My sunbeds',
+      not_found:'Sunbed not found. Please scan the QR code again.',err_room:'Please enter a valid room number.',
+      err_dolu:'Sorry, this sunbed was just taken.',err_limit:'Your room has reached the sunbed limit ({n}).',
+      err_generic:'Something went wrong, please try again.',ok_taken:'The sunbed is yours. Enjoy your holiday!',
+      ok_here:'Thank you, confirmed.',ok_released:'Sunbed released. Thank you!',
+      scan_hint:'To take a sunbed, scan the QR code on it.',calm:'Quiet',mid:'Moderate',busy:'Busy',full:'Full',
+      room:'Room',change:'Change',warn_short:'warning',since:'Since',min:'min'},
+  de:{title:'Liege',bos:'Frei',dolu:'Belegt',uyari:'Warnung',kapali:'Gesperrt',benim:'Ihre',
+      room_label:'Ihre Zimmernummer',take:'Liege belegen',mine_title:'Diese Liege gehört Ihnen',here:'Ich bin hier',
+      release:'Liege freigeben',confirm_again:'Zum Freigeben erneut tippen',
+      occupied_title:'Diese Liege ist belegt',occupied_text:'Unten sehen Sie die Live-Auslastung und Bereiche mit freien Liegen.',
+      is_yours:'Ist das Ihre Liege? Geben Sie Ihre Zimmernummer ein.',check:'Prüfen',
+      closed_title:'Diese Liege ist derzeit gesperrt',closed_text:'Bitte nutzen Sie eine andere Liege in der Nähe.',
+      warn_title:'Ihre Liege schien unbenutzt',warn_text:'Unser Personal hat Ihre Liege unbenutzt vorgefunden. Wenn Sie nicht rechtzeitig auf „Ich bin hier“ tippen, wird sie für andere Gäste freigegeben.',
+      rules:'Wenn Sie Ihre Liege längere Zeit unbenutzt lassen, hinterlässt unser Personal eine Hinweiskarte; kehren Sie nicht innerhalb von {m} Minuten zurück, wird die Liege freigegeben. Reservieren mit Handtüchern ist nicht erlaubt.',
+      map_title:'Live-Auslastung',free:'frei',updated:'Aktualisiert',my_title:'Meine Liegen',
+      not_found:'Liege nicht gefunden. Bitte scannen Sie den QR-Code erneut.',err_room:'Bitte geben Sie eine gültige Zimmernummer ein.',
+      err_dolu:'Leider wurde diese Liege gerade belegt.',err_limit:'Das Liegen-Limit für Ihr Zimmer ist erreicht ({n}).',
+      err_generic:'Ein Fehler ist aufgetreten, bitte erneut versuchen.',ok_taken:'Die Liege gehört Ihnen. Schönen Urlaub!',
+      ok_here:'Danke, bestätigt.',ok_released:'Liege freigegeben. Vielen Dank!',
+      scan_hint:'Scannen Sie den QR-Code auf der Liege, um sie zu belegen.',calm:'Ruhig',mid:'Mittel',busy:'Voll',full:'Belegt',
+      room:'Zimmer',change:'Ändern',warn_short:'Warnung',since:'Seit',min:'Min.'},
+  ru:{title:'Шезлонг',bos:'Свободен',dolu:'Занят',uyari:'Внимание',kapali:'Недоступен',benim:'Ваш',
+      room_label:'Номер вашей комнаты',take:'Занять шезлонг',mine_title:'Этот шезлонг ваш',here:'Я здесь',
+      release:'Освободить шезлонг',confirm_again:'Нажмите ещё раз, чтобы освободить',
+      occupied_title:'Этот шезлонг занят',occupied_text:'Ниже показана загруженность зон — там можно найти свободные шезлонги.',
+      is_yours:'Это ваш шезлонг? Введите номер комнаты.',check:'Проверить',
+      closed_title:'Этот шезлонг сейчас недоступен',closed_text:'Пожалуйста, выберите другой шезлонг поблизости.',
+      warn_title:'Ваш шезлонг пустовал',warn_text:'Наш сотрудник заметил, что ваш шезлонг пустует. Если вы не нажмёте «Я здесь» до истечения времени, шезлонг освободят для других гостей.',
+      rules:'Если вы надолго оставите шезлонг, сотрудник оставит на нём карточку-предупреждение; если вы не вернётесь в течение {m} минут, шезлонг освободят для других гостей. Занимать шезлонги полотенцами нельзя.',
+      map_title:'Загруженность сейчас',free:'свободно',updated:'Обновлено',my_title:'Мои шезлонги',
+      not_found:'Шезлонг не найден. Пожалуйста, отсканируйте QR-код ещё раз.',err_room:'Введите корректный номер комнаты.',
+      err_dolu:'К сожалению, этот шезлонг только что заняли.',err_limit:'Достигнут лимит шезлонгов для вашей комнаты ({n}).',
+      err_generic:'Произошла ошибка, попробуйте ещё раз.',ok_taken:'Шезлонг ваш. Хорошего отдыха!',
+      ok_here:'Спасибо, подтверждено.',ok_released:'Шезлонг освобождён. Спасибо!',
+      scan_hint:'Чтобы занять шезлонг, отсканируйте QR-код на нём.',calm:'Спокойно',mid:'Средне',busy:'Многолюдно',full:'Занято',
+      room:'Комната',change:'Изменить',warn_short:'внимание',since:'С',min:'мин'}
+};
+const LANGS = ['tr','en','de','ru'];
+const store = {
+  get(k){ try{ return localStorage.getItem(k) }catch(e){ return null } },
+  set(k,v){ try{ v==null ? localStorage.removeItem(k) : localStorage.setItem(k,v) }catch(e){} }
+};
+const qs = new URLSearchParams(location.search);
+let lang = qs.get('lang') || store.get('sz_lang') || (navigator.language||'tr').slice(0,2).toLowerCase();
+if(!LANGS.includes(lang)) lang = 'en';
+let oda = store.get('sz_oda') || '';
+const kod = (qs.get('s')||'').trim().toUpperCase();
+let info = null, flash = null, confirmRelease = false, countdownTimer = null, autoPinged = false;
+
+const C = window.SEZLONG_CONFIG || {};
+const sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+const t = (k, v={}) => (T[lang][k]||T.en[k]||k).replace(/\{(\w+)\}/g,(_,x)=>v[x]);
+const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = id => document.getElementById(id);
+
+async function rpc(fn, args){
+  const { data, error } = await sb.rpc(fn, args);
+  if(error) throw error;
+  return data;
+}
+
+function renderLangs(){
+  $('langs').innerHTML = LANGS.map(l=>`<button class="${l===lang?'on':''}" onclick="setLang('${l}')">${l.toUpperCase()}</button>`).join('');
+  document.documentElement.lang = lang;
+  $('title').textContent = kod ? `${t('title')} ${kod}` : t('map_title');
+  $('mapTitle').textContent = t('map_title');
+}
+function setLang(l){ lang=l; store.set('sz_lang',l); renderAll(); }
+
+function renderAll(){ renderLangs(); renderBed(); loadMine(); loadMap(); }
+
+function showMsg(type, text){ flash = {type, text}; }
+function msgHtml(){
+  if(!flash) return '<div class="msg"></div>';
+  const h = `<div class="msg show ${flash.type}">${esc(flash.text)}</div>`;
+  return h;
+}
+
+async function loadBed(){
+  if(!kod){ info = null; renderBed(); return; }
+  try{
+    info = await rpc('misafir_sezlong', { p_kod: kod, p_oda: oda || null });
+    if(info.otel) $('hotel').textContent = info.otel.toLocaleUpperCase('en');
+    // QR'ı tekrar okutmak = "buradayım" sayılır
+    if(info.ok && info.benim && !autoPinged){
+      autoPinged = true;
+      await rpc('misafir_buradayim', { p_kod: kod, p_oda: oda });
+      if(info.durum === 'uyari') showMsg('ok', t('ok_here'));
+      info = await rpc('misafir_sezlong', { p_kod: kod, p_oda: oda });
+    }
+  }catch(e){ info = { ok:false, hata:'ag' }; }
+  renderBed();
+}
+
+function badge(){
+  if(!info || !info.ok) return '';
+  if(info.benim) return `<span class="badge ${info.durum==='uyari'?'b-uyari':'b-benim'}">${info.durum==='uyari'?t('uyari'):t('benim')}</span>`;
+  const d = info.durum === 'uyari' ? 'dolu' : info.durum;
+  return `<span class="badge b-${d}">${t(d)}</span>`;
+}
+
+function renderBed(){
+  const el = $('bedCard');
+  clearInterval(countdownTimer);
+  if(!kod){
+    el.innerHTML = `<h2>${t('title')}</h2><p>${t('scan_hint')}</p>`;
+    return;
+  }
+  if(!info){ el.innerHTML = '<div class="skeleton"></div>'; return; }
+  if(!info.ok){
+    el.innerHTML = `<div class="code">${esc(kod)}</div><p style="margin-top:12px">${info.hata==='bulunamadi'?t('not_found'):t('err_generic')}</p>`;
+    return;
+  }
+  const head = `<div class="bed"><div><div class="code">${esc(info.kod)}</div><div class="area">${esc(info.alan)}</div></div>${badge()}</div>`;
+  const rules = `<div class="rules">${t('rules',{m:info.uyari_sure_dk})}</div>`;
+  let body = '';
+
+  if(info.durum === 'kapali'){
+    body = `<h2 style="margin-top:16px">${t('closed_title')}</h2><p>${t('closed_text')}</p>`;
+  } else if(info.benim){
+    const roomLine = `<div class="room-line" style="margin-top:14px"><span>${t('room')}: <b>${esc(oda)}</b></span></div>`;
+    const warn = info.durum === 'uyari'
+      ? `<div class="warnbox"><b>${t('warn_title')}</b><p style="margin:6px 0 0;font-size:14px">${t('warn_text')}</p><div class="countdown" id="cd"></div></div>` : '';
+    body = `${roomLine}<h2 style="margin-top:12px">${t('mine_title')}</h2>${warn}
+      <button class="btn btn-p" onclick="here()">${t('here')}</button>
+      <button class="btn btn-g ${confirmRelease?'confirm':''}" onclick="release()">${confirmRelease?t('confirm_again'):t('release')}</button>
+      ${msgHtml()}${rules}`;
+  } else if(info.durum === 'bos'){
+    body = `<label for="oda">${t('room_label')}</label>
+      <input id="oda" inputmode="numeric" autocomplete="off" maxlength="6" value="${esc(oda)}" placeholder="1205">
+      <button class="btn btn-p" id="takeBtn" onclick="take()">${t('take')}</button>${msgHtml()}${rules}`;
+  } else {
+    body = `<h2 style="margin-top:16px">${t('occupied_title')}</h2><p>${t('occupied_text')}</p>
+      <label for="oda">${t('is_yours')}</label>
+      <input id="oda" inputmode="numeric" autocomplete="off" maxlength="6" value="${esc(oda)}" placeholder="1205">
+      <button class="btn btn-n" onclick="checkMine()">${t('check')}</button>${msgHtml()}`;
+  }
+  el.innerHTML = head + body;
+  flash = null;
+
+  if(info.benim && info.uyari_bitis){
+    const end = new Date(info.uyari_bitis).getTime();
+    const tick = () => {
+      const s = Math.max(0, Math.round((end - Date.now())/1000));
+      const c = $('cd'); if(c) c.textContent = `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+    };
+    tick(); countdownTimer = setInterval(tick, 1000);
+  }
+}
+
+function readRoom(){
+  const v = ($('oda')?.value || '').replace(/\s/g,'').toUpperCase();
+  return v;
+}
+
+async function take(){
+  const r = readRoom();
+  if(!r){ showMsg('err', t('err_room')); renderBed(); return; }
+  $('takeBtn').disabled = true;
+  try{
+    const res = await rpc('misafir_al', { p_kod: kod, p_oda: r });
+    if(res.ok){
+      oda = r; store.set('sz_oda', r); autoPinged = true;
+      showMsg('ok', t('ok_taken'));
+    } else {
+      const m = {oda:'err_room', dolu:'err_dolu', limit:'err_limit', kapali:'closed_title', bulunamadi:'not_found'}[res.hata] || 'err_generic';
+      showMsg('err', t(m, {n: res.limit}));
+    }
+  }catch(e){ showMsg('err', t('err_generic')); }
+  const keep = flash;
+  await loadBed(); flash = keep; renderBed(); loadMine(); loadMap();
+}
+
+async function checkMine(){
+  const r = readRoom();
+  if(!r) return;
+  oda = r; store.set('sz_oda', r); autoPinged = false;
+  await loadBed(); loadMine();
+}
+
+async function here(){
+  try{
+    const res = await rpc('misafir_buradayim', { p_kod: kod, p_oda: oda });
+    showMsg(res.ok ? 'ok' : 'err', res.ok ? t('ok_here') : t('err_generic'));
+  }catch(e){ showMsg('err', t('err_generic')); }
+  const keep = flash; await loadBed(); flash = keep; renderBed(); loadMine();
+}
+
+async function release(){
+  if(!confirmRelease){ confirmRelease = true; renderBed(); setTimeout(()=>{ if(confirmRelease){ confirmRelease=false; renderBed(); } }, 5000); return; }
+  confirmRelease = false;
+  try{
+    const res = await rpc('misafir_birak', { p_kod: kod, p_oda: oda });
+    showMsg(res.ok ? 'ok' : 'err', res.ok ? t('ok_released') : t('err_generic'));
+  }catch(e){ showMsg('err', t('err_generic')); }
+  const keep = flash; await loadBed(); flash = keep; renderBed(); loadMine(); loadMap();
+}
+
+function changeRoom(){ oda=''; store.set('sz_oda', null); autoPinged=false; loadBed(); loadMine(); }
+
+async function loadMine(){
+  const el = $('mineCard');
+  if(!oda){ el.style.display='none'; return; }
+  try{
+    const list = await rpc('misafir_sezlonglarim', { p_oda: oda });
+    if(!list || !list.length){ el.style.display='none'; return; }
+    el.style.display='block';
+    el.innerHTML = `<div class="sec-h"><h2>${t('my_title')}</h2>
+        <div class="room-line">${t('room')} ${esc(oda)} · <button onclick="changeRoom()">${t('change')}</button></div></div>` +
+      list.map(x=>`<div class="mine-row"><span><b>${esc(x.kod)}</b> · ${esc(x.alan)}</span>
+        ${x.uyari?`<span class="badge b-uyari">${t('uyari')}</span>`:''}</div>`).join('');
+  }catch(e){ el.style.display='none'; }
+}
+
+async function loadMap(){
+  const el = $('map');
+  try{
+    const list = await rpc('alan_doluluk', {});
+    el.innerHTML = list.filter(a=>a.toplam>0).map(a=>{
+      const p = a.toplam ? Math.round(a.dolu*100/a.toplam) : 0;
+      const free = Math.max(0, a.toplam - a.dolu);
+      const [lvl, col] = p >= 95 ? [t('full'),'#C2462A'] : p >= 75 ? [t('busy'),'#E0663B'] : p >= 45 ? [t('mid'),'#C99A2E'] : [t('calm'),'#2E8B57'];
+      return `<div class="ar"><div class="ar-top"><span class="ar-name">${esc(a.ad)}<span class="lvl" style="color:${col}">${lvl}</span></span>
+        <span class="ar-free"><b>${free}</b> ${t('free')}</span></div>
+        <div class="bar"><i style="width:${p}%;background:${col}"></i></div></div>`;
+    }).join('') || `<p>—</p>`;
+    $('updated').textContent = `${t('updated')} ${new Date().toLocaleTimeString(lang,{hour:'2-digit',minute:'2-digit'})}`;
+  }catch(e){ /* sessizce bir sonraki yenilemeyi bekle */ }
+}
+
+renderLangs();
+loadBed(); loadMine(); loadMap();
+setInterval(loadMap, 30000);
+setInterval(()=>{ if(kod && !document.hidden && !document.activeElement?.matches('input')) loadBed(); }, 60000);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ loadMap(); if(kod) loadBed(); } });
+</script>
+</body>
+</html>
